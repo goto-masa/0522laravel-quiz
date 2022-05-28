@@ -4,7 +4,8 @@
 
 ## やったこと
 
-* Userマイグレーションの実装、Wordマイグレーションの実装、Auth認証の実装（composer require laravel/ui）、home画面の実装
+* Userマイグレーションの実装、Wordマイグレーションの実装、Auth認証の実装（composer require laravel/ui）、home画面の実装。
+他、Userテーブル→Wordテーブルで1対多の炉レーションを調整した。
 
 ## やらないこと
 
