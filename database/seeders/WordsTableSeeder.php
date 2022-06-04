@@ -18,11 +18,16 @@ class WordsTableSeeder extends Seeder
     {
         $user = DB::table('users')->first();
 
-        $titles = ['apple', 'orange', 'apple'];
+        $titles = [
+            'apple' => 'リンゴ',
+            'orange' => 'みかん',
+            'banana' => 'バナナ'
+        ];
 
-        foreach ($titles as $title) {
+        foreach ($titles as $title => $translation) {
             DB::table('words')->insert([
                 'title' => $title,
+                'translation' => $translation,
                 'user_id' => $user->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

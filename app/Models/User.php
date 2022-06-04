@@ -43,6 +43,6 @@ class User extends Authenticatable
     ];
     public function words()
     {
-        return $this->hasMany('App\Wold');
+        return $this->hasMany('App\Models\Word');
     }
 }
