@@ -39,7 +39,7 @@
                     </div>
                     <div class="adjustment">
                         <button type="button" class="btn btn-outline-primary">
-                            {{-- <a class="h4" href="{{route('words.create,['id' => $user->id]')}}">単語を登録する</a> --}}
+                            <a class="h4" href="{{route('words.create')}}">単語を登録する</a>
                         </button>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="margin-center display-f">
                     <div class="adjustment">
                         <button type="button" class="btn btn-outline-primary">
-                            <a class="h4" href="">単語帳一覧へ</a></button>
+                            <a class="h4" href="{{route('words.index')}}">単語帳一覧へ</a></button>
                     </div>
                     <div class="adjust-text">
                         <h2 class="pb-3">STEP2</h2>
