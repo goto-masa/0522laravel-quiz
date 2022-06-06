@@ -64,7 +64,7 @@
                     </div>
                     <div class="adjustment">
                         <button type="button" class="btn btn-outline-primary">
-                            <a href="" class="h4">クイズに挑戦する</a></button>
+                            <a class="h4" href="{{route('quiz.index')}}" >クイズに挑戦する</a></button>
                     </div>
                 </div>
             </div>

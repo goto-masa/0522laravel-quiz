@@ -20,7 +20,7 @@ class WordController extends Controller
         // ★ ユーザーの単語一覧を取得する
         $words = Auth::user()->words()->get();
 
-        // dd($words);
+        dd($words);
         return view('words/index', [
             'words' => $words,
         ]);

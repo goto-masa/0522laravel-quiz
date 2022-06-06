@@ -2,7 +2,6 @@
         <main id="quiz" class="l-section__wide">
             <article id="question" class="p-quiz">
                 <section>
-                    <div>アイウエオ</div>
                     <div v-if="hidden">
                         <h1 class="c-bar c-bar--large c-bar--pink">問題 {{ quizNum }}.{{ quizzes[quizNum - 1].title }}</h1>
                         <div v-if="showQuiz">
@@ -19,6 +18,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="p-quiz__explain" v-if="showExplain">
                         <h2 class="is-correct" v-if="judgment">
                             <i class="far fa-circle mr-4"></i>正解！
@@ -48,7 +48,7 @@
     </template>
 
     <script>
-    // import QuizResult from "./QuizResult/QuizResult";
+    import QuizResult from "./QuizResult/QuizResult";
 export default {
         name: "QuizContents",
         components: {
@@ -76,7 +76,7 @@ export default {
                 hidden: false,
                 alertMsg: false,
                 judgment: "",
-                axiosUrl: "/quizzes/quiz",
+                axiosUrl: ""
             };
         },
         created() {
@@ -86,20 +86,34 @@ export default {
         },
         methods: {
             getQuizzes: function () {
+                let quizUrl = location.pathname;
+                let catId = quizUrl.match(/\d/g);
+                let catNum;
+                if (catId) {
+                    catNum = catId.join("");
+                }
+
+                if (quizUrl == "/quiz/" + catNum) {
+                    this.axiosUrl = "ajax/menu" + catNum;
+                } else if (quizUrl == "/quiz/region/" + catNum) {
+                    this.axiosUrl = "ajax/region" + catNum;
+                } else {
+                    this.axiosUrl = "ajax/menu";
+                }
+
                 axios
                     .get(this.axiosUrl)
-                    .then(res => console.log(res))
-                    // {
-                    //     this.quizzes = res.data;
-                    //     this.totalQuizNum = this.quizzes.length;
-                    //     //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
-                    //     if (this.totalQuizNum) {
-                    //         this.hidden = true;
-                    //     } else {
-                    //         this.alertMsg = true;
-                    //     }
-                    //     this.getChoice(this.quizNum - 1);
-                    // }
+                    .then(res => {
+                        this.quizzes = res.data;
+                        this.totalQuizNum = this.quizzes.length;
+                        //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
+                        if (this.totalQuizNum) {
+                            this.hidden = true;
+                        } else {
+                            this.alertMsg = true;
+                        }
+                        this.getChoice(this.quizNum - 1);
+                    })
                     .catch(error => {
                         console.log(error);
                     });
