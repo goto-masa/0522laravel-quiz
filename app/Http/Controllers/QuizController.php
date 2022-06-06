@@ -16,12 +16,10 @@ class QuizController extends Controller
     public function index()
     {
         // ★ ユーザーの単語一覧を取得する
-        $words = Auth::user()->words()->get();
-
-
-        // dd($words);
-        return view('words/index', [
-            'words' => $words,
+        $tests = Auth::user()->words()->get();
+        // dd($tests);
+        return view('quizzes/quiz', [
+            'tests' => $tests,
         ]);
     }
 }

@@ -32,9 +32,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/words/{word}/edit', 'App\Http\Controllers\WordController@edit');
 
     // クイズ画面を取得
-    Route::get('/quizzes/quiz', function () {
-        return view('/quizzes/quiz');
-    });
+    // Route::get('/quizzes/quiz', 'App\Http\Controllers\QuizController@index')->name('quiz.index');
+
+    Route::get('/quizzes/quiz', 'App\Http\Controllers\QuizController@index')->name('quiz.index');
 });
 
 
