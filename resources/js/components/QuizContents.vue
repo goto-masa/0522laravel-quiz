@@ -1,82 +1,98 @@
     <template>
-        <main id="quiz" class="l-section__wide">
-            <article id="question" class="p-quiz">
-                <section>
-                    <div>アイウエオ</div>
-                    <div v-if="hidden">
-                        <h1 class="c-bar c-bar--large c-bar--pink">問題 {{ quizNum }}.{{ quizzes[quizNum - 1].title }}</h1>
-                        <div v-if="showQuiz">
-                            <!-- <div v-if="quizzes[quizNum - 1].image_name">
+    <main id="quiz" class="l-section__wide">
+        <article id="question" class="p-quiz">
+            <section>
+                <ul>
+                    <li v-for="(word,key) in words" :key="key">{{ word }}</li>
+                </ul>
+                <br>
+                <br>
+                <br>
+                <p>{{ words }}</p>
+                <p>{{ wordsLength }}</p>
+                <p>{{ random }}</p>
+                <p>{{ correct_id }}</p>
+                <p>{{ correct_title}}</p>
+                <p>{{correct_translation }}</p>
+                <br>
+                <br>
+                <br>
+                <div v-if="hidden">
+                    <h1 class="c-bar c-bar--large c-bar--pink">問題 {{ quizNum }}.{{ quizzes[quizNum - 1].title }}</h1>
+                    <div v-if="showQuiz">
+                        <!-- <div v-if="quizzes[quizNum - 1].image_name">
                                 <div class="p-quiz__img">
                                     <img :src="quizzes[quizNum - 1].image_name" alt="クイズ画像">
                                 </div>
                             </div> -->
 
-                            <div class="p-quiz__choice">
-                                <ul v-for="choice in aChoice">
-                                    <li class="c-bar c-bar--gray" @click="showAnswer(choice)">{{ choice }}</li>
-                                </ul>
-                            </div>
+                        <div class="p-quiz__choice">
+                            <ul v-for="choice in aChoice">
+                                <li class="c-bar c-bar--gray" @click="showAnswer(choice)">{{ choice }}</li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="p-quiz__explain" v-if="showExplain">
-                        <h2 class="is-correct" v-if="judgment">
+                </div>
+                <div class="p-quiz__explain" v-if="showExplain">
+                    <h2 class="is-correct" v-if="judgment">
                             <i class="far fa-circle mr-4"></i>正解！
                         </h2>
-                        <h2 class="is-uncorrect" v-else>
+                    <h2 class="is-uncorrect" v-else>
                             <i class="fas fa-times mr-4"></i>不正解
                         </h2>
-                        <p>
+                    <p>
                             <strong>解説：</strong>
                             {{ quizzes[quizNum - 1].explain_sentence }}
                         </p>
-                        <button @click="next()" type="button" class="btn btn-default">次へ</button>
-                    </div>
-                </section>
+                    <button @click="next()" type="button" class="btn btn-default">次へ</button>
+                </div>
+            </section>
 
-                <section class="p-quiz__empty-msg" v-if="alertMsg">
-                    <p>
+            <section class="p-quiz__empty-msg" v-if="alertMsg">
+                <p>
                     <i class="far mr-2 fa-lg fa-tired"></i>クイズはまだ登録されていません。
                     <i class="far fa-lg fa-tired"></i>
                     </p>
-                    <a href="/quiz">クイズTOPへ</a>
-                </section>
-            </article>
+                <a href="/quiz">クイズTOPへ</a>
+            </section>
+        </article>
 
-            <quiz-result ref="result" :totalCorrectNum="totalCorrectNum"></quiz-result>
-        </main>
-    </template>
+        <!-- <quiz-result ref="result" :totalCorrectNum="totalCorrectNum"></quiz-result> -->
+    </main>
+</template>
 
     <script>
     // import QuizResult from "./QuizResult/QuizResult";
 export default {
         name: "QuizContents",
-        components: {
-            QuizResult
-        },
+        // components: {
+        //     QuizResult
+        // },
         data: function () {
             return {
                 quizNum: 1,
                 totalQuizNum: 0,
                 totalCorrectNum: 0,
-                quizzes: [
-                    {
-                        title: "",
-                        correct: "",
-                        uncorrect1: "",
-                        uncorrect2: "",
-                        image_name: "",
-                        explain_sentence: ""
-                    }
+                words: [
+                    // {
+                    //     id: "",
+                    //     title: "",
+                    //     translation: ""
+                    // }
                 ],
-                aChoice: [],
+                correct:"",
+                correct_id: "",
+                correct_title: "",
+                correct_translation: "",
                 showQuiz: true,
                 showExplain: false,
                 existImage: false,
                 hidden: false,
                 alertMsg: false,
                 judgment: "",
-                axiosUrl: "/quizzes/quiz",
+                axiosUrl: "/axios",
+                wordsLength: "",
+                random:""
             };
         },
         created() {
@@ -88,32 +104,41 @@ export default {
             getQuizzes: function () {
                 axios
                     .get(this.axiosUrl)
-                    .then(res => console.log(res))
-                    // {
-                    //     this.quizzes = res.data;
-                    //     this.totalQuizNum = this.quizzes.length;
-                    //     //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
-                    //     if (this.totalQuizNum) {
-                    //         this.hidden = true;
-                    //     } else {
-                    //         this.alertMsg = true;
-                    //     }
-                    //     this.getChoice(this.quizNum - 1);
-                    // }
+                    .then(res =>
+                    {
+                        this.words = res.data;
+                        this.wordsLength = this.words.length;
+                        //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
+                        if (this.totalQuizNum) {
+                            this.hidden = true;
+                        } else {
+                            this.alertMsg = true;
+                        }
+                        this.getChoice(this.quizNum - 1);
+                    }
+                    )
                     .catch(error => {
                         console.log(error);
                     });
             },
-            shuffleAry: function (array) {
-                const ary = array.slice();
-                for (let i = ary.length - 1; 0 < i; i--) {
-                    let r = Math.floor(Math.random() * (i + 1));
-                    [ary[i], ary[r]] = [ary[r], ary[i]];
-                }
-                return ary;
-            },
+            // shuffleAry: function (array) {
+            //     const ary = array.slice();
+            //     for (let i = ary.length - 1; 0 < i; i--) {
+            //         let r = Math.floor(Math.random() * (i + 1));
+            //         [ary[i], ary[r]] = [ary[r], ary[i]];
+            //     }
+            //     return ary;
+            // },
             getChoice: function (index) {
                 //前回の選択肢を削除してから新しく選択肢を追加する
+                this.random = Math.floor(Math.random() * this.wordsLength);
+
+                this.correct_id = this.words[this.random].id;
+                this.correct_title = this.words[this.random].title;
+                this.correct_translation = this.words[this.random].translation;
+
+
+
                 this.aChoice = [];
                 this.aChoice.push(
                     this.quizzes[index].correct,

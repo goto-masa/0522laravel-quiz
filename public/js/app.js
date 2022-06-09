@@ -5417,33 +5417,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // import QuizResult from "./QuizResult/QuizResult";
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "QuizContents",
-  components: {
-    QuizResult: QuizResult
-  },
+  // components: {
+  //     QuizResult
+  // },
   data: function data() {
     return {
       quizNum: 1,
       totalQuizNum: 0,
       totalCorrectNum: 0,
-      quizzes: [{
-        title: "",
-        correct: "",
-        uncorrect1: "",
-        uncorrect2: "",
-        image_name: "",
-        explain_sentence: ""
-      }],
-      aChoice: [],
+      words: [// {
+        //     id: "",
+        //     title: "",
+        //     translation: ""
+        // }
+      ],
+      correct: "",
+      correct_id: "",
+      correct_title: "",
+      correct_translation: "",
       showQuiz: true,
       showExplain: false,
       existImage: false,
       hidden: false,
       alertMsg: false,
       judgment: "",
-      axiosUrl: "/quizzes/quiz"
+      axiosUrl: "/axios",
+      wordsLength: "",
+      random: ""
     };
   },
   created: function created() {
@@ -5453,37 +5470,37 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getQuizzes: function getQuizzes() {
+      var _this = this;
+
       axios.get(this.axiosUrl).then(function (res) {
-        return console.log(res);
-      }) // {
-      //     this.quizzes = res.data;
-      //     this.totalQuizNum = this.quizzes.length;
-      //     //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
-      //     if (this.totalQuizNum) {
-      //         this.hidden = true;
-      //     } else {
-      //         this.alertMsg = true;
-      //     }
-      //     this.getChoice(this.quizNum - 1);
-      // }
-      ["catch"](function (error) {
+        _this.words = res.data;
+        _this.wordsLength = _this.words.length; //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
+
+        if (_this.totalQuizNum) {
+          _this.hidden = true;
+        } else {
+          _this.alertMsg = true;
+        }
+
+        _this.getChoice(_this.quizNum - 1);
+      })["catch"](function (error) {
         console.log(error);
       });
     },
-    shuffleAry: function shuffleAry(array) {
-      var ary = array.slice();
-
-      for (var i = ary.length - 1; 0 < i; i--) {
-        var r = Math.floor(Math.random() * (i + 1));
-        var _ref = [ary[r], ary[i]];
-        ary[i] = _ref[0];
-        ary[r] = _ref[1];
-      }
-
-      return ary;
-    },
+    // shuffleAry: function (array) {
+    //     const ary = array.slice();
+    //     for (let i = ary.length - 1; 0 < i; i--) {
+    //         let r = Math.floor(Math.random() * (i + 1));
+    //         [ary[i], ary[r]] = [ary[r], ary[i]];
+    //     }
+    //     return ary;
+    // },
     getChoice: function getChoice(index) {
       //前回の選択肢を削除してから新しく選択肢を追加する
+      this.random = Math.floor(Math.random() * this.wordsLength);
+      this.correct_id = this.words[this.random].id;
+      this.correct_title = this.words[this.random].title;
+      this.correct_translation = this.words[this.random].translation;
       this.aChoice = [];
       this.aChoice.push(this.quizzes[index].correct, this.quizzes[index].uncorrect1, this.quizzes[index].uncorrect2);
       this.aChoice = this.shuffleAry(this.aChoice);
@@ -5552,7 +5569,7 @@ Vue.component('example-component', (__webpack_require__(/*! ./components/QuizCon
  */
 
 var app = new Vue({
-  el: '#app'
+  el: '#apple'
 });
 
 /***/ }),
@@ -28127,107 +28144,127 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "main",
-    { staticClass: "l-section__wide", attrs: { id: "quiz" } },
-    [
-      _c("article", { staticClass: "p-quiz", attrs: { id: "question" } }, [
-        _c("section", [
-          _c("div", [_vm._v("アイウエオ")]),
-          _vm._v(" "),
-          _vm.hidden
-            ? _c("div", [
-                _c("h1", { staticClass: "c-bar c-bar--large c-bar--pink" }, [
-                  _vm._v(
-                    "問題 " +
-                      _vm._s(_vm.quizNum) +
-                      "." +
-                      _vm._s(_vm.quizzes[_vm.quizNum - 1].title)
-                  ),
-                ]),
-                _vm._v(" "),
-                _vm.showQuiz
-                  ? _c("div", [
-                      _c(
-                        "div",
-                        { staticClass: "p-quiz__choice" },
-                        _vm._l(_vm.aChoice, function (choice) {
-                          return _c("ul", [
-                            _c(
-                              "li",
-                              {
-                                staticClass: "c-bar c-bar--gray",
-                                on: {
-                                  click: function ($event) {
-                                    return _vm.showAnswer(choice)
-                                  },
+  return _c("main", { staticClass: "l-section__wide", attrs: { id: "quiz" } }, [
+    _c("article", { staticClass: "p-quiz", attrs: { id: "question" } }, [
+      _c("section", [
+        _c(
+          "ul",
+          _vm._l(_vm.words, function (word, key) {
+            return _c("li", { key: key }, [_vm._v(_vm._s(word))])
+          }),
+          0
+        ),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(_vm.words))]),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(_vm.wordsLength))]),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(_vm.random))]),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(_vm.correct_id))]),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(_vm.correct_title))]),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(_vm.correct_translation))]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _vm.hidden
+          ? _c("div", [
+              _c("h1", { staticClass: "c-bar c-bar--large c-bar--pink" }, [
+                _vm._v(
+                  "問題 " +
+                    _vm._s(_vm.quizNum) +
+                    "." +
+                    _vm._s(_vm.quizzes[_vm.quizNum - 1].title)
+                ),
+              ]),
+              _vm._v(" "),
+              _vm.showQuiz
+                ? _c("div", [
+                    _c(
+                      "div",
+                      { staticClass: "p-quiz__choice" },
+                      _vm._l(_vm.aChoice, function (choice) {
+                        return _c("ul", [
+                          _c(
+                            "li",
+                            {
+                              staticClass: "c-bar c-bar--gray",
+                              on: {
+                                click: function ($event) {
+                                  return _vm.showAnswer(choice)
                                 },
                               },
-                              [_vm._v(_vm._s(choice))]
-                            ),
-                          ])
-                        }),
-                        0
-                      ),
-                    ])
-                  : _vm._e(),
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.showExplain
-            ? _c("div", { staticClass: "p-quiz__explain" }, [
-                _vm.judgment
-                  ? _c("h2", { staticClass: "is-correct" }, [
-                      _c("i", { staticClass: "far fa-circle mr-4" }),
-                      _vm._v("正解！\n                "),
-                    ])
-                  : _c("h2", { staticClass: "is-uncorrect" }, [
-                      _c("i", { staticClass: "fas fa-times mr-4" }),
-                      _vm._v("不正解\n                "),
-                    ]),
-                _vm._v(" "),
-                _c("p", [
-                  _c("strong", [_vm._v("解説：")]),
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(_vm.quizzes[_vm.quizNum - 1].explain_sentence) +
-                      "\n                "
-                  ),
-                ]),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-default",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function ($event) {
-                        return _vm.next()
-                      },
+                            },
+                            [_vm._v(_vm._s(choice))]
+                          ),
+                        ])
+                      }),
+                      0
+                    ),
+                  ])
+                : _vm._e(),
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.showExplain
+          ? _c("div", { staticClass: "p-quiz__explain" }, [
+              _vm.judgment
+                ? _c("h2", { staticClass: "is-correct" }, [
+                    _c("i", { staticClass: "far fa-circle mr-4" }),
+                    _vm._v("正解！\n                    "),
+                  ])
+                : _c("h2", { staticClass: "is-uncorrect" }, [
+                    _c("i", { staticClass: "fas fa-times mr-4" }),
+                    _vm._v("不正解\n                    "),
+                  ]),
+              _vm._v(" "),
+              _c("p", [
+                _c("strong", [_vm._v("解説：")]),
+                _vm._v(
+                  "\n                        " +
+                    _vm._s(_vm.quizzes[_vm.quizNum - 1].explain_sentence) +
+                    "\n                    "
+                ),
+              ]),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-default",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function ($event) {
+                      return _vm.next()
                     },
                   },
-                  [_vm._v("次へ")]
-                ),
-              ])
-            : _vm._e(),
-        ]),
-        _vm._v(" "),
-        _vm.alertMsg
-          ? _c("section", { staticClass: "p-quiz__empty-msg" }, [
-              _vm._m(0),
-              _vm._v(" "),
-              _c("a", { attrs: { href: "/quiz" } }, [_vm._v("クイズTOPへ")]),
+                },
+                [_vm._v("次へ")]
+              ),
             ])
           : _vm._e(),
       ]),
       _vm._v(" "),
-      _c("quiz-result", {
-        ref: "result",
-        attrs: { totalCorrectNum: _vm.totalCorrectNum },
-      }),
-    ],
-    1
-  )
+      _vm.alertMsg
+        ? _c("section", { staticClass: "p-quiz__empty-msg" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("a", { attrs: { href: "/quiz" } }, [_vm._v("クイズTOPへ")]),
+          ])
+        : _vm._e(),
+    ]),
+  ])
 }
 var staticRenderFns = [
   function () {
@@ -28236,7 +28273,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("p", [
       _c("i", { staticClass: "far mr-2 fa-lg fa-tired" }),
-      _vm._v("クイズはまだ登録されていません。\n            "),
+      _vm._v("クイズはまだ登録されていません。\n                "),
       _c("i", { staticClass: "far fa-lg fa-tired" }),
     ])
   },
