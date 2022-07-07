@@ -1,26 +1,36 @@
 <template>
     <div v-if="hidden2">
-        正解数は{{ quiznumber }}中、{{ totalCorrectNum }}門でした！！
-        <button @click="retry()" type="button" class="btn btn-default">リトライ</button>
+    <!-- <div> -->
+        正解数は{{ totalquizNum + 1 }}門中、{{ totalCorrectNum}}門でした！！
+        <button @click="retryQuiz" type="button" class="btn btn-default">リトライ</button>
     </div>
 </template>
 <script>
 export default {
-    name: 'Quiz-result',
-    props: ['val'],
+    name: 'QuizResult',
+    props: {
+        'totalquizNum': {
+            type: Number,
+            default: ''
+        },
+        'totalCorrectNum': {
+            type: Number,
+            default: ''
+        }
+    },
     data: function () {
         return {
             hidden2: false,
-            quiznumber:""
         };
     },
     methods: {
         showResult: function () {
             this.hidden2 = true;
-            this.quiznumber = quizNum.length;
+
         },
-        retry: function () {
-            getQuizzes();
+        retryQuiz: function () {
+            this.hidden2 = false;
+            this.$emit('parentFunc');
         }
     }
 };

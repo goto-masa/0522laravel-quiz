@@ -21,7 +21,10 @@ class WordsTableSeeder extends Seeder
         $titles = [
             'apple' => 'リンゴ',
             'orange' => 'みかん',
-            'banana' => 'バナナ'
+            'banana' => 'バナナ',
+            'implicit' => '暗黙',
+            'priority' => '優先順位',
+            'indicate' => '示す'
         ];
 
         foreach ($titles as $title => $translation) {

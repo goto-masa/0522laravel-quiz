@@ -17,7 +17,7 @@ class CreateWordsTable extends Migration
             $table->increments('id');
             $table->string('title', 20)->nullable();
             $table->string('translation', 40)->nullable();
-            $table->bigInteger('user_id', 20)->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
         });
     }

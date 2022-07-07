@@ -5368,29 +5368,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _QuizResult_QuizResult__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuizResult/QuizResult */ "./resources/js/components/QuizResult/QuizResult.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+/* harmony import */ var _QuizResult_QuizResult_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuizResult/QuizResult.vue */ "./resources/js/components/QuizResult/QuizResult.vue");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -5451,22 +5441,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "QuizContents",
   components: {
-    QuizResult: _QuizResult_QuizResult__WEBPACK_IMPORTED_MODULE_0__["default"]
+    QuizResult: _QuizResult_QuizResult_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
     return {
       quizNum: 1,
+      totalquizNum: 0,
       totalCorrectNum: 0,
       words: [],
       aChoice: [],
-      quizzes: [{
-        correct: "",
-        // correct_id: "",
-        // correct_title: "",
-        // correct_translation: "",
-        incorrect: "",
-        incorrect2: ""
-      }],
       showQuiz: true,
       showExplain: false,
       existImage: false,
@@ -5474,15 +5457,53 @@ __webpack_require__.r(__webpack_exports__);
       alertMsg: false,
       judgment: "",
       axiosUrl: "/axios",
-      wordsLength: "",
       random: "",
+      wordsLength: [],
       wordsLengthLatest: "",
-      randomLatest: ""
+      wordsLengthLatest2: "",
+      randomLatest: "",
+      randomLatest2: "",
+      // dev
+      answer: "",
+      choice: "",
+      correct: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      correct_title: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      incorrect: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      incorrect2: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      pre_aChoice: [],
+      pre_aChoice2: "",
+      pre_choice_debag: "",
+      index: [],
+      array: ""
     };
   },
   created: function created() {
     //DOM構築前にクイズデータをaxiosで取得(そうしないとエラーでる↓)
-    //"TypeError: Cannot read property 'title' of undefined"
+    // "TypeError: Cannot read property 'title' of undefined"
     this.getQuizzes();
   },
   methods: {
@@ -5490,10 +5511,14 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get(this.axiosUrl).then(function (res) {
-        _this.words = res.data;
+        var _this$words;
+
+        // this.words = res.data;
+        (_this$words = _this.words).splice.apply(_this$words, [0, _this.words.length].concat(_toConsumableArray(res.data)));
+
         _this.wordsLength = _this.words.length; //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
 
-        if (_this.quizzes) {
+        if (_this.wordsLength > 2) {
           _this.hidden = true;
         } else {
           _this.alertMsg = true;
@@ -5504,67 +5529,94 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
+    getChoice: function getChoice(index) {
+      // this.index = index;
+      this.$set(this.index, 0, index);
+      this.random = Math.floor(Math.random() * this.wordsLength); // this.correct[index] = this.words[this.random].translation;
+
+      this.$set(this.correct, this.index, this.words[this.random].translation); // this.correct_title = this.words[this.random].title;
+
+      this.$set(this.correct_title, this.index, this.words[this.random].title);
+      this.words.splice(this.random, 1);
+      this.wordsLengthLatest = this.words.length;
+      this.randomLatest = Math.floor(Math.random() * this.wordsLengthLatest); // this.incorrect[index] = this.words[this.randomLatest].translation;
+
+      this.$set(this.incorrect, this.index, this.words[this.randomLatest].translation);
+      this.words.splice(this.randomLatest, 1);
+      this.wordsLengthLatest2 = this.words.length;
+      this.randomLatest2 = Math.floor(Math.random() * this.wordsLengthLatest2); // this.incorrect2[index] = this.words[this.randomLatest2].translation;
+
+      this.$set(this.incorrect2, this.index, this.words[this.randomLatest2].translation);
+      this.words.splice(this.randomLatest2, 1);
+      this.aChoice = [];
+
+      if (this.index < 1) {
+        this.pre_aChoice.push(this.correct[index], this.incorrect[index], this.incorrect2[index]);
+        this.aChoice = this.shuffleAry(this.pre_aChoice);
+        this.aChoice.splice();
+      } else {
+        this.pre_aChoice.pop();
+        this.pre_aChoice.pop();
+        this.pre_aChoice.pop();
+        this.pre_aChoice.push(this.correct[index], this.incorrect[index], this.incorrect2[index]);
+        this.aChoice = this.shuffleAry(this.pre_aChoice);
+        this.aChoice.splice();
+      } // this.aChoice = this.shuffleAry(this.pre_aChoice);
+
+    },
     shuffleAry: function shuffleAry(array) {
       var ary = array.slice();
 
       for (var i = ary.Length - 1; 0 < i; i--) {
         var r = Math.floor(Math.random() * (i + 1));
-        var _ref = [ary[r], ary[i]];
-        ary[i] = _ref[0];
-        ary[r] = _ref[1];
+        var tmp = ary[i];
+        ary[i] = ary[r];
+        ary[r] = tmp;
       }
 
       return ary;
     },
-    getChoice: function getChoice(index) {
-      this.random = Math.floor(Math.random() * this.wordsLength);
-      this.quizzes[index].correct = this.words[this.random]; // this.correct_id = this.words[this.random].id;
-      // this.correct_title = this.words[this.random].title;
-      // this.correct_translation = this.words[this.random].translation;
-
-      this.words.splice(this.random, 1);
-      this.wordsLengthLatest = this.words.length;
-      this.randomLatest = Math.floor(Math.random() * this.wordsLengthLatest);
-      this.quizzes[index].incorrect = this.words[this.randomLatest]; // this.incorrect_id = this.words[this.randomLatest].id;
-      // this.incorrect_title = this.words[this.randomLatest].title;
-      // this.incorrect_translation = this.words[this.randomLatest].translation;
-
-      this.words.splice(this.randomLatest, 1);
-      this.wordsLengthLatest2 = this.words.length;
-      this.randomLatest2 = Math.floor(Math.random() * this.wordsLengthLatest2);
-      this.quizzes[index].incorrect2 = this.words[this.randomLatest2]; // this.incorrect_id2 = this.words[this.randomLatest2].id;
-      // this.incorrect_title2 = this.words[this.randomLatest2].title;
-      // this.incorrect_translation2 = this.words[this.randomLatest2].translation;
-
-      this.aChoice = [];
-      this.aChoice.push(this.quizzes[index].correct.translation, this.quizzes[index].incorrect.translation, this.quizzes[index].incorrect2.translation);
-      this.aChoice = this.shuffleAry(this.aChoice);
-    },
-    showAnswer: function showAnswer(choice) {
+    showAnswer: function showAnswer(pre_choice) {
       this.showQuiz = !this.showQuiz; //false
 
       this.showExplain = !this.showExplain; //true
+      // this.pre_choice_debag = pre_choice;
 
-      var answer = this.quizzes[this.quizNum - 1].correct.translation;
-
-      if (choice === answer) {
+      if (this.correct[this.index] === pre_choice) {
         this.judgment = true;
         this.totalCorrectNum++;
-        this.$refs.totalCorrectNum;
       } else {
         this.judgment = false;
       }
     },
     next: function next() {
-      if (this.quizNum < this.totalQuizNum) {
+      // if (this.totalquizNum < 6 && this.wordsLength > 2) {
+      if (this.totalquizNum < 1) {
         this.showQuiz = true;
         this.showExplain = false;
         this.quizNum++;
-        this.nextCounter++;
-        this.getChoice(this.quizNum - 1);
+        this.totalquizNum++;
+        this.getChoice(this.totalquizNum);
       } else {
-        this.$refs.result.showResult();
+        this.showExplain = false;
+        this.executeFromChild();
       }
+    },
+    executeFromChild: function executeFromChild() {
+      this.$refs.result.showResult();
+    },
+    parentRetry: function parentRetry() {
+      this.hidden2 = false;
+      this.showQuiz = true;
+      this.showExplain = false;
+      this.quizNum = 1;
+      this.totalquizNum = 0;
+      this.totalCorrectNum = 0;
+      this.correct = [];
+      this.incorrect = [];
+      this.incorrect2 = [];
+      this.pre_aChoice = [];
+      this.getQuizzes();
     }
   }
 });
@@ -5588,22 +5640,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'Quiz-result',
-  props: ['val'],
+  name: 'QuizResult',
+  props: {
+    'totalquizNum': {
+      type: Number,
+      "default": ''
+    },
+    'totalCorrectNum': {
+      type: Number,
+      "default": ''
+    }
+  },
   data: function data() {
     return {
-      hidden2: false,
-      quiznumber: ""
+      hidden2: false
     };
   },
   methods: {
     showResult: function showResult() {
       this.hidden2 = true;
-      this.quiznumber = quizNum.length;
     },
-    retry: function retry() {
-      getQuizzes();
+    retryQuiz: function retryQuiz() {
+      this.hidden2 = false;
+      this.$emit('parentFunc');
     }
   }
 });
@@ -28304,9 +28365,13 @@ var render = function () {
             0
           ),
           _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
           _c("p", [_vm._v("words:" + _vm._s(_vm.words))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("totalCorrectNum:" + _vm._s(_vm.totalCorrectNum))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("totalquizNum:" + _vm._s(_vm.totalquizNum))]),
+          _vm._v(" "),
+          _c("p", [_vm._v(" quizNum - 1:" + _vm._s(_vm.quizNum - 1))]),
           _vm._v(" "),
           _c("p", [_vm._v("wordsLength:" + _vm._s(_vm.wordsLength))]),
           _vm._v(" "),
@@ -28318,28 +28383,13 @@ var render = function () {
           _vm._v(" "),
           _c("p", [_vm._v("incorrect2:" + _vm._s(_vm.incorrect2))]),
           _vm._v(" "),
+          _c("p", [_vm._v("correct_title:" + _vm._s(_vm.correct_title))]),
+          _vm._v(" "),
           _c("p", [_vm._v("aChoice:" + _vm._s(_vm.aChoice))]),
           _vm._v(" "),
-          _c("p", [
-            _vm._v("wordsLengthLatest2:" + _vm._s(_vm.wordsLengthLatest2)),
-          ]),
+          _c("p", [_vm._v("pre_aChoice:" + _vm._s(_vm.pre_aChoice))]),
           _vm._v(" "),
-          _c("p", [_vm._v("randomLatest2:" + _vm._s(_vm.randomLatest2))]),
-          _vm._v(" "),
-          _c("p", [_vm._v("quizzes[0]:" + _vm._s(_vm.quizzes[0]))]),
-          _vm._v(" "),
-          _c("p", [_vm._v("quizzes[1]:" + _vm._s(_vm.quizzes[1]))]),
-          _vm._v(" "),
-          _c("p", [
-            _vm._v(
-              "quizzes[this.quizNum - 1].correct.translation:" +
-                _vm._s(_vm.quizzes[this.quizNum - 1].correct.translation)
-            ),
-          ]),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("br"),
+          _c("p", [_vm._v("index:" + _vm._s(_vm.index))]),
           _vm._v(" "),
           _c("br"),
           _vm._v(" "),
@@ -28348,36 +28398,36 @@ var render = function () {
                 _c("h1", { staticClass: "c-bar c-bar--large c-bar--pink" }, [
                   _vm._v(
                     "問題 " +
-                      _vm._s(_vm.quizNum) +
-                      "：「" +
-                      _vm._s(_vm.quizzes[_vm.quizNum - 1].correct.title) +
-                      "」の和訳は次の3つのうちどれ？？"
+                      _vm._s(_vm.totalquizNum + 1) +
+                      " ：\n                                                    「" +
+                      _vm._s(this.correct_title[this.index]) +
+                      "」の和訳は次の3つのうちどれ？？\n                                                    "
                   ),
                 ]),
                 _vm._v(" "),
                 _vm.showQuiz
                   ? _c("div", [
-                      _c(
-                        "div",
-                        { staticClass: "p-quiz__choice" },
-                        _vm._l(_vm.aChoice, function (choice, key) {
-                          return _c("ul", { key: key }, [
-                            _c(
+                      _c("div", { staticClass: "p-quiz__choice" }, [
+                        _c(
+                          "ul",
+                          _vm._l(_vm.aChoice, function (pre_choice, index) {
+                            return _c(
                               "li",
                               {
+                                key: index,
                                 staticClass: "c-bar c-bar--gray",
                                 on: {
                                   click: function ($event) {
-                                    return _vm.showAnswer(choice)
+                                    return _vm.showAnswer(pre_choice)
                                   },
                                 },
                               },
-                              [_vm._v(_vm._s(choice))]
-                            ),
-                          ])
-                        }),
-                        0
-                      ),
+                              [_vm._v(_vm._s(pre_choice))]
+                            )
+                          }),
+                          0
+                        ),
+                      ]),
                     ])
                   : _vm._e(),
               ])
@@ -28388,21 +28438,16 @@ var render = function () {
                 _vm.judgment
                   ? _c("h2", { staticClass: "is-correct" }, [
                       _c("i", { staticClass: "far fa-circle mr-4" }),
-                      _vm._v("正解！\n                    "),
+                      _vm._v(
+                        "正解！\n                                                    "
+                      ),
                     ])
                   : _c("h2", { staticClass: "is-uncorrect" }, [
                       _c("i", { staticClass: "fas fa-times mr-4" }),
-                      _vm._v("不正解\n                    "),
+                      _vm._v(
+                        "不正解\n                                                    "
+                      ),
                     ]),
-                _vm._v(" "),
-                _c("p", [
-                  _c("strong", [_vm._v("解説：")]),
-                  _vm._v(
-                    "\n                        " +
-                      _vm._s(_vm.quizzes[_vm.quizNum - 1].explain_sentence) +
-                      "\n                    "
-                  ),
-                ]),
                 _vm._v(" "),
                 _c(
                   "button",
@@ -28432,7 +28477,11 @@ var render = function () {
       _vm._v(" "),
       _c("quiz-result", {
         ref: "result",
-        attrs: { totalCorrectNum: _vm.totalCorrectNum },
+        attrs: {
+          totalquizNum: _vm.totalquizNum,
+          totalCorrectNum: _vm.totalCorrectNum,
+        },
+        on: { parentFunc: _vm.parentRetry },
       }),
     ],
     1
@@ -28445,7 +28494,9 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("p", [
       _c("i", { staticClass: "far mr-2 fa-lg fa-tired" }),
-      _vm._v("クイズはまだ登録されていません。\n                "),
+      _vm._v(
+        "クイズはまだ登録されていません。\n                                                    "
+      ),
       _c("i", { staticClass: "far fa-lg fa-tired" }),
     ])
   },
@@ -28476,8 +28527,8 @@ var render = function () {
     ? _c("div", [
         _vm._v(
           "\n    正解数は" +
-            _vm._s(_vm.quiznumber) +
-            "中、" +
+            _vm._s(_vm.totalquizNum + 1) +
+            "門中、" +
             _vm._s(_vm.totalCorrectNum) +
             "門でした！！\n    "
         ),
@@ -28486,11 +28537,7 @@ var render = function () {
           {
             staticClass: "btn btn-default",
             attrs: { type: "button" },
-            on: {
-              click: function ($event) {
-                return _vm.retry()
-              },
-            },
+            on: { click: _vm.retryQuiz },
           },
           [_vm._v("リトライ")]
         ),

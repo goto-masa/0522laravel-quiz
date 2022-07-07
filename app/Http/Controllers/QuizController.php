@@ -17,7 +17,6 @@ class QuizController extends Controller
     {
         // ★ ユーザーの単語一覧を取得する
         $tests = Auth::user()->words()->get();
-        // dd($tests);
         return view('quizzes/quiz', [
             'tests' => $tests,
         ]);

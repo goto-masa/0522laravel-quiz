@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::table('words', function (Blueprint $table) {
-            $table->bigInteger('user_id')->unsigned();
+            // $table->bigInteger('user_id')->unsigned();
 
             // 外部キーを設定する
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
