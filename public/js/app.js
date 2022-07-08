@@ -5368,6 +5368,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _QuizResult_QuizResult_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuizResult/QuizResult.vue */ "./resources/js/components/QuizResult/QuizResult.vue");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -5417,25 +5430,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-// import QuizResult from "./QuizResult/QuizResult";
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "QuizContents",
   components: {
-    QuizResult: QuizResult
+    QuizResult: _QuizResult_QuizResult_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
     return {
       quizNum: 1,
-      totalQuizNum: 0,
+      totalquizNum: 0,
       totalCorrectNum: 0,
-      quizzes: [{
-        title: "",
-        correct: "",
-        uncorrect1: "",
-        uncorrect2: "",
-        image_name: "",
-        explain_sentence: ""
-      }],
+      words: [],
       aChoice: [],
       showQuiz: true,
       showExplain: false,
@@ -5443,76 +5456,215 @@ __webpack_require__.r(__webpack_exports__);
       hidden: false,
       alertMsg: false,
       judgment: "",
-      axiosUrl: "/quizzes/quiz"
+      axiosUrl: "/axios",
+      random: "",
+      wordsLength: [],
+      wordsLengthLatest: "",
+      wordsLengthLatest2: "",
+      randomLatest: "",
+      randomLatest2: "",
+      // dev
+      answer: "",
+      choice: "",
+      correct: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      correct_title: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      incorrect: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      incorrect2: {
+        '0': '',
+        '1': '',
+        '2': '',
+        '3': '',
+        '4': ''
+      },
+      pre_aChoice: [],
+      pre_aChoice2: "",
+      pre_choice_debag: "",
+      index: [],
+      array: ""
     };
   },
   created: function created() {
     //DOM構築前にクイズデータをaxiosで取得(そうしないとエラーでる↓)
-    //"TypeError: Cannot read property 'title' of undefined"
+    // "TypeError: Cannot read property 'title' of undefined"
     this.getQuizzes();
   },
   methods: {
     getQuizzes: function getQuizzes() {
+      var _this = this;
+
       axios.get(this.axiosUrl).then(function (res) {
-        return console.log(res);
-      }) // {
-      //     this.quizzes = res.data;
-      //     this.totalQuizNum = this.quizzes.length;
-      //     //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
-      //     if (this.totalQuizNum) {
-      //         this.hidden = true;
-      //     } else {
-      //         this.alertMsg = true;
-      //     }
-      //     this.getChoice(this.quizNum - 1);
-      // }
-      ["catch"](function (error) {
+        var _this$words;
+
+        // this.words = res.data;
+        (_this$words = _this.words).splice.apply(_this$words, [0, _this.words.length].concat(_toConsumableArray(res.data)));
+
+        _this.wordsLength = _this.words.length; //クイズがある時はDOMを表示しクイズがない場合は無いですメッセージを表示
+
+        if (_this.wordsLength > 2) {
+          _this.hidden = true;
+        } else {
+          _this.alertMsg = true;
+        }
+
+        _this.getChoice(_this.quizNum - 1);
+      })["catch"](function (error) {
         console.log(error);
       });
+    },
+    getChoice: function getChoice(index) {
+      // this.index = index;
+      this.$set(this.index, 0, index);
+      this.random = Math.floor(Math.random() * this.wordsLength); // this.correct[index] = this.words[this.random].translation;
+
+      this.$set(this.correct, this.index, this.words[this.random].translation); // this.correct_title = this.words[this.random].title;
+
+      this.$set(this.correct_title, this.index, this.words[this.random].title);
+      this.words.splice(this.random, 1);
+      this.wordsLengthLatest = this.words.length;
+      this.randomLatest = Math.floor(Math.random() * this.wordsLengthLatest); // this.incorrect[index] = this.words[this.randomLatest].translation;
+
+      this.$set(this.incorrect, this.index, this.words[this.randomLatest].translation);
+      this.words.splice(this.randomLatest, 1);
+      this.wordsLengthLatest2 = this.words.length;
+      this.randomLatest2 = Math.floor(Math.random() * this.wordsLengthLatest2); // this.incorrect2[index] = this.words[this.randomLatest2].translation;
+
+      this.$set(this.incorrect2, this.index, this.words[this.randomLatest2].translation);
+      this.words.splice(this.randomLatest2, 1);
+      this.aChoice = [];
+
+      if (this.index < 1) {
+        this.pre_aChoice.push(this.correct[index], this.incorrect[index], this.incorrect2[index]);
+        this.aChoice = this.shuffleAry(this.pre_aChoice);
+        this.aChoice.splice();
+      } else {
+        this.pre_aChoice.pop();
+        this.pre_aChoice.pop();
+        this.pre_aChoice.pop();
+        this.pre_aChoice.push(this.correct[index], this.incorrect[index], this.incorrect2[index]);
+        this.aChoice = this.shuffleAry(this.pre_aChoice);
+        this.aChoice.splice();
+      } // this.aChoice = this.shuffleAry(this.pre_aChoice);
+
     },
     shuffleAry: function shuffleAry(array) {
       var ary = array.slice();
 
-      for (var i = ary.length - 1; 0 < i; i--) {
+      for (var i = ary.Length - 1; 0 < i; i--) {
         var r = Math.floor(Math.random() * (i + 1));
-        var _ref = [ary[r], ary[i]];
-        ary[i] = _ref[0];
-        ary[r] = _ref[1];
+        var tmp = ary[i];
+        ary[i] = ary[r];
+        ary[r] = tmp;
       }
 
       return ary;
     },
-    getChoice: function getChoice(index) {
-      //前回の選択肢を削除してから新しく選択肢を追加する
-      this.aChoice = [];
-      this.aChoice.push(this.quizzes[index].correct, this.quizzes[index].uncorrect1, this.quizzes[index].uncorrect2);
-      this.aChoice = this.shuffleAry(this.aChoice);
-    },
-    showAnswer: function showAnswer(choice) {
+    showAnswer: function showAnswer(pre_choice) {
       this.showQuiz = !this.showQuiz; //false
 
       this.showExplain = !this.showExplain; //true
+      // this.pre_choice_debag = pre_choice;
 
-      var answer = this.quizzes[this.quizNum - 1].correct;
-
-      if (choice === answer) {
+      if (this.correct[this.index] === pre_choice) {
         this.judgment = true;
         this.totalCorrectNum++;
-        this.$refs.totalCorrectNum;
       } else {
         this.judgment = false;
       }
     },
     next: function next() {
-      if (this.quizNum < this.totalQuizNum) {
+      // if (this.totalquizNum < 6 && this.wordsLength > 2) {
+      if (this.totalquizNum < 1) {
         this.showQuiz = true;
         this.showExplain = false;
         this.quizNum++;
-        this.nextCounter++;
-        this.getChoice(this.quizNum - 1);
+        this.totalquizNum++;
+        this.getChoice(this.totalquizNum);
       } else {
-        this.$refs.result.showResult();
+        this.showExplain = false;
+        this.executeFromChild();
       }
+    },
+    executeFromChild: function executeFromChild() {
+      this.$refs.result.showResult();
+    },
+    parentRetry: function parentRetry() {
+      this.hidden2 = false;
+      this.showQuiz = true;
+      this.showExplain = false;
+      this.quizNum = 1;
+      this.totalquizNum = 0;
+      this.totalCorrectNum = 0;
+      this.correct = [];
+      this.incorrect = [];
+      this.incorrect2 = [];
+      this.pre_aChoice = [];
+      this.getQuizzes();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/QuizResult/QuizResult.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/QuizResult/QuizResult.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'QuizResult',
+  props: {
+    'totalquizNum': {
+      type: Number,
+      "default": ''
+    },
+    'totalCorrectNum': {
+      type: Number,
+      "default": ''
+    }
+  },
+  data: function data() {
+    return {
+      hidden2: false
+    };
+  },
+  methods: {
+    showResult: function showResult() {
+      this.hidden2 = true;
+    },
+    retryQuiz: function retryQuiz() {
+      this.hidden2 = false;
+      this.$emit('parentFunc');
     }
   }
 });
@@ -5552,7 +5704,7 @@ Vue.component('example-component', (__webpack_require__(/*! ./components/QuizCon
  */
 
 var app = new Vue({
-  el: '#app'
+  el: '#apple'
 });
 
 /***/ }),
@@ -28078,6 +28230,45 @@ component.options.__file = "resources/js/components/QuizContents.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/QuizResult/QuizResult.vue":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/QuizResult/QuizResult.vue ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _QuizResult_vue_vue_type_template_id_06f7d518___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuizResult.vue?vue&type=template&id=06f7d518& */ "./resources/js/components/QuizResult/QuizResult.vue?vue&type=template&id=06f7d518&");
+/* harmony import */ var _QuizResult_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./QuizResult.vue?vue&type=script&lang=js& */ "./resources/js/components/QuizResult/QuizResult.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _QuizResult_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _QuizResult_vue_vue_type_template_id_06f7d518___WEBPACK_IMPORTED_MODULE_0__.render,
+  _QuizResult_vue_vue_type_template_id_06f7d518___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/QuizResult/QuizResult.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/QuizContents.vue?vue&type=script&lang=js&":
 /*!***************************************************************************!*\
   !*** ./resources/js/components/QuizContents.vue?vue&type=script&lang=js& ***!
@@ -28094,6 +28285,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/QuizResult/QuizResult.vue?vue&type=script&lang=js&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/QuizResult/QuizResult.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QuizResult_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./QuizResult.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/QuizResult/QuizResult.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QuizResult_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/QuizContents.vue?vue&type=template&id=cf6b5e0c&scoped=true&":
 /*!*********************************************************************************************!*\
   !*** ./resources/js/components/QuizContents.vue?vue&type=template&id=cf6b5e0c&scoped=true& ***!
@@ -28107,6 +28314,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuizContents_vue_vue_type_template_id_cf6b5e0c_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuizContents_vue_vue_type_template_id_cf6b5e0c_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./QuizContents.vue?vue&type=template&id=cf6b5e0c&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/QuizContents.vue?vue&type=template&id=cf6b5e0c&scoped=true&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/QuizResult/QuizResult.vue?vue&type=template&id=06f7d518&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/QuizResult/QuizResult.vue?vue&type=template&id=06f7d518& ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuizResult_vue_vue_type_template_id_06f7d518___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuizResult_vue_vue_type_template_id_06f7d518___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuizResult_vue_vue_type_template_id_06f7d518___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./QuizResult.vue?vue&type=template&id=06f7d518& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/QuizResult/QuizResult.vue?vue&type=template&id=06f7d518&");
 
 
 /***/ }),
@@ -28133,42 +28357,77 @@ var render = function () {
     [
       _c("article", { staticClass: "p-quiz", attrs: { id: "question" } }, [
         _c("section", [
-          _c("div", [_vm._v("アイウエオ")]),
+          _c(
+            "ul",
+            _vm._l(_vm.words, function (word, key) {
+              return _c("li", { key: key }, [_vm._v(_vm._s(word))])
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c("p", [_vm._v("words:" + _vm._s(_vm.words))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("totalCorrectNum:" + _vm._s(_vm.totalCorrectNum))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("totalquizNum:" + _vm._s(_vm.totalquizNum))]),
+          _vm._v(" "),
+          _c("p", [_vm._v(" quizNum - 1:" + _vm._s(_vm.quizNum - 1))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("wordsLength:" + _vm._s(_vm.wordsLength))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("random:" + _vm._s(_vm.random))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("correct:" + _vm._s(_vm.correct))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("incorrect:" + _vm._s(_vm.incorrect))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("incorrect2:" + _vm._s(_vm.incorrect2))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("correct_title:" + _vm._s(_vm.correct_title))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("aChoice:" + _vm._s(_vm.aChoice))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("pre_aChoice:" + _vm._s(_vm.pre_aChoice))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("index:" + _vm._s(_vm.index))]),
+          _vm._v(" "),
+          _c("br"),
           _vm._v(" "),
           _vm.hidden
             ? _c("div", [
                 _c("h1", { staticClass: "c-bar c-bar--large c-bar--pink" }, [
                   _vm._v(
                     "問題 " +
-                      _vm._s(_vm.quizNum) +
-                      "." +
-                      _vm._s(_vm.quizzes[_vm.quizNum - 1].title)
+                      _vm._s(_vm.totalquizNum + 1) +
+                      " ：\n                                                    「" +
+                      _vm._s(this.correct_title[this.index]) +
+                      "」の和訳は次の3つのうちどれ？？\n                                                    "
                   ),
                 ]),
                 _vm._v(" "),
                 _vm.showQuiz
                   ? _c("div", [
-                      _c(
-                        "div",
-                        { staticClass: "p-quiz__choice" },
-                        _vm._l(_vm.aChoice, function (choice) {
-                          return _c("ul", [
-                            _c(
+                      _c("div", { staticClass: "p-quiz__choice" }, [
+                        _c(
+                          "ul",
+                          _vm._l(_vm.aChoice, function (pre_choice, index) {
+                            return _c(
                               "li",
                               {
+                                key: index,
                                 staticClass: "c-bar c-bar--gray",
                                 on: {
                                   click: function ($event) {
-                                    return _vm.showAnswer(choice)
+                                    return _vm.showAnswer(pre_choice)
                                   },
                                 },
                               },
-                              [_vm._v(_vm._s(choice))]
-                            ),
-                          ])
-                        }),
-                        0
-                      ),
+                              [_vm._v(_vm._s(pre_choice))]
+                            )
+                          }),
+                          0
+                        ),
+                      ]),
                     ])
                   : _vm._e(),
               ])
@@ -28179,21 +28438,16 @@ var render = function () {
                 _vm.judgment
                   ? _c("h2", { staticClass: "is-correct" }, [
                       _c("i", { staticClass: "far fa-circle mr-4" }),
-                      _vm._v("正解！\n                "),
+                      _vm._v(
+                        "正解！\n                                                    "
+                      ),
                     ])
                   : _c("h2", { staticClass: "is-uncorrect" }, [
                       _c("i", { staticClass: "fas fa-times mr-4" }),
-                      _vm._v("不正解\n                "),
+                      _vm._v(
+                        "不正解\n                                                    "
+                      ),
                     ]),
-                _vm._v(" "),
-                _c("p", [
-                  _c("strong", [_vm._v("解説：")]),
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(_vm.quizzes[_vm.quizNum - 1].explain_sentence) +
-                      "\n                "
-                  ),
-                ]),
                 _vm._v(" "),
                 _c(
                   "button",
@@ -28223,7 +28477,11 @@ var render = function () {
       _vm._v(" "),
       _c("quiz-result", {
         ref: "result",
-        attrs: { totalCorrectNum: _vm.totalCorrectNum },
+        attrs: {
+          totalquizNum: _vm.totalquizNum,
+          totalCorrectNum: _vm.totalCorrectNum,
+        },
+        on: { parentFunc: _vm.parentRetry },
       }),
     ],
     1
@@ -28236,11 +28494,57 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("p", [
       _c("i", { staticClass: "far mr-2 fa-lg fa-tired" }),
-      _vm._v("クイズはまだ登録されていません。\n            "),
+      _vm._v(
+        "クイズはまだ登録されていません。\n                                                    "
+      ),
       _c("i", { staticClass: "far fa-lg fa-tired" }),
     ])
   },
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/QuizResult/QuizResult.vue?vue&type=template&id=06f7d518&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/QuizResult/QuizResult.vue?vue&type=template&id=06f7d518& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.hidden2
+    ? _c("div", [
+        _vm._v(
+          "\n    正解数は" +
+            _vm._s(_vm.totalquizNum + 1) +
+            "門中、" +
+            _vm._s(_vm.totalCorrectNum) +
+            "門でした！！\n    "
+        ),
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-default",
+            attrs: { type: "button" },
+            on: { click: _vm.retryQuiz },
+          },
+          [_vm._v("リトライ")]
+        ),
+      ])
+    : _vm._e()
+}
+var staticRenderFns = []
 render._withStripped = true
 
 

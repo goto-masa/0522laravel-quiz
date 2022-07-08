@@ -29,5 +29,5 @@ Vue.component('example-component', require('./components/QuizContents.vue').defa
  */
 
 const app = new Vue({
-    el: '#app',
+    el: '#apple',
 });

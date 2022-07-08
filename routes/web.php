@@ -35,6 +35,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/quizzes/quiz', 'App\Http\Controllers\QuizController@index')->name('quiz.index');
 
     Route::get('/quizzes/quiz', 'App\Http\Controllers\QuizController@index')->name('quiz.index');
+
+    Route::get('/axios', function () {
+        return App\Models\Word::all();
+    });
 });
 
 
